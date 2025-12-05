@@ -31,12 +31,12 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   final List<Map<String, dynamic>> _categories = [
-    {'name': 'أخرى', 'icon': Icons.category},
-    {'name': 'مأكولات بحرية', 'icon': Icons.set_meal},
-    {'name': 'قشار', 'icon': Icons.water_drop},
-    {'name': 'النمد', 'icon': Icons.waves},
-    {'name': 'البياض', 'icon': Icons.water},
-    {'name': 'الأكثر طلبا', 'icon': Icons.local_fire_department},
+    {'name': 'أخرى', 'image': 'assets/images/fish.png'},
+    {'name': 'مأكولات بحرية', 'image': 'assets/images/fish.png'},
+    {'name': 'قشار', 'image': 'assets/images/fish.png'},
+    {'name': 'النمد', 'image': 'assets/images/fish.png'},
+    {'name': 'البياض', 'image': 'assets/images/fish.png'},
+    {'name': 'الأكثر طلبا', 'image': 'assets/images/fish.png'},
   ];
 
   final List<Map<String, dynamic>> _fishProducts = [
@@ -139,12 +139,13 @@ class _MainScreenState extends State<MainScreen> {
                                   width: 1,
                                 ),
                               ),
-                              child: Icon(
-                                _categories[index]['icon'],
+                              child: Image.asset(
+                                _categories[index]['image'],
                                 color: isSelected
                                     ? Colors.white
                                     : AppColors.textPrimary,
-                                size: 28,
+                                width: 28,
+                                height: 28,
                               ),
                             ),
                             const SizedBox(height: 4),
