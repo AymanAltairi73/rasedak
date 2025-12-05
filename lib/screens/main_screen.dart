@@ -197,17 +197,22 @@ class _MainScreenState extends State<MainScreen> {
               
               // التنقل بين الشاشات
               if (index == 0) {
+                // الانتقال لشاشة الملف الشخصي
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const ProfileScreen(),
                   ),
                 );
               } else if (index == 1) {
+                // الانتقال لشاشة طلب جديد
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const NewOrderScreen(),
                   ),
                 );
+              } else if (index == 2) {
+                // البقاء على الشاشة الرئيسية (لا نحتاج للانتقال)
+                // يمكن إضافة scroll to top هنا إذا أردت
               }
             },
             selectedItemColor: AppColors.primary,
@@ -311,7 +316,7 @@ class _MainScreenState extends State<MainScreen> {
           Expanded(
             flex: 2,
             child: Container(
-              padding: const EdgeInsets.all(12),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.8),
                 borderRadius: const BorderRadius.vertical(
@@ -319,7 +324,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
                     product['name'],

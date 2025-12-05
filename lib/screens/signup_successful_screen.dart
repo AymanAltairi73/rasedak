@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
-import '../widgets/custom_button.dart';
 import 'main_screen.dart';
 
 class SignupSuccessfulScreen extends StatefulWidget {
@@ -39,6 +38,13 @@ class _SignupSuccessfulScreenState extends State<SignupSuccessfulScreen>
     );
 
     _animationController.forward();
+    
+    // الانتقال التلقائي للشاشة الرئيسية بعد 3 ثوانٍ
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        _goToMain();
+      }
+    });
   }
 
   @override
@@ -114,10 +120,17 @@ class _SignupSuccessfulScreenState extends State<SignupSuccessfulScreen>
                 
                 const Spacer(),
                 
-                // زر الذهاب للتطبيق
-                CustomButton(
-                  text: AppStrings.goToApp,
+                // زر تخطي (سيتم الانتقال تلقائياً)
+                TextButton(
                   onPressed: _goToMain,
+                  child: Text(
+                    'تخطي',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 
                 const SizedBox(height: 20),

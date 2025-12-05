@@ -3,7 +3,9 @@ import '../utils/constants.dart';
 import '../utils/validators.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/form_input.dart';
+import '../services/auth_service.dart';
 import 'signup_screen.dart';
+import 'main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,14 +18,32 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _authService = AuthService();
   bool _isLoading = false;
   bool _rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedLoginData();
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadSavedLoginData() async {
+    final savedData = await _authService.getSavedLoginData();
+    if (savedData['rememberMe'] == true) {
+      setState(() {
+        _emailController.text = savedData['savedEmail'] ?? '';
+        _passwordController.text = savedData['savedPassword'] ?? '';
+        _rememberMe = true;
+      });
+    }
   }
 
   Future<void> _handleLogin() async {
@@ -40,10 +60,17 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoading = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('تم تسجيل الدخول بنجاح'),
-            backgroundColor: Colors.green,
+        // حفظ بيانات تسجيل الدخول
+        await _authService.saveLoginState(
+          _emailController.text,
+          _passwordController.text,
+          _rememberMe,
+        );
+
+        // الانتقال لشاشة الرئيسية بعد تسجيل الدخول بنجاح
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const MainScreen(),
           ),
         );
       }

@@ -1,6 +1,8 @@
 // خدمة المصادقة - مثال محاكي
 // يمكن استبدالها لاحقاً بـ API حقيقي
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class AuthService {
   // محاكاة تسجيل الدخول
   Future<Map<String, dynamic>> login(String email, String password) async {
@@ -79,5 +81,45 @@ class AuthService {
       'success': true,
       'message': 'تم إرسال الرمز بنجاح',
     };
+  }
+
+  // حفظ بيانات تسجيل الدخول
+  Future<void> saveLoginState(String email, String password, bool rememberMe) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('userEmail', email);
+    if (rememberMe) {
+      await prefs.setString('savedEmail', email);
+      await prefs.setString('savedPassword', password);
+      await prefs.setBool('rememberMe', true);
+    } else {
+      await prefs.remove('savedEmail');
+      await prefs.remove('savedPassword');
+      await prefs.setBool('rememberMe', false);
+    }
+  }
+
+  // استرجاع بيانات تسجيل الدخول المحفوظة
+  Future<Map<String, dynamic>> getSavedLoginData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'rememberMe': prefs.getBool('rememberMe') ?? false,
+      'savedEmail': prefs.getString('savedEmail') ?? '',
+      'savedPassword': prefs.getString('savedPassword') ?? '',
+    };
+  }
+
+  // التحقق من حالة تسجيل الدخول المحفوظة
+  Future<bool> checkSavedLoginState() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  // تسجيل الخروج وحذف البيانات
+  Future<void> logoutAndClear() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await prefs.remove('userEmail');
+    // لا نحذف البيانات المحفوظة إذا كان rememberMe مفعل
   }
 }
