@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../utils/constants.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/form_input.dart';
+import '../services/order_service.dart';
 import 'order_confirmation_screen.dart';
 
 class NewOrderScreen extends StatefulWidget {
@@ -20,7 +23,9 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   final _quantityController = TextEditingController();
   final _descriptionController = TextEditingController();
   
-  final List<String> _selectedImages = [];
+  final List<File?> _selectedImages = [null, null, null, null];
+  final ImagePicker _imagePicker = ImagePicker();
+  final OrderService _orderService = OrderService();
   bool _isLoading = false;
 
   @override
@@ -35,32 +40,56 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
   }
 
   Future<void> _pickImage(int index) async {
-    // TODO: implement image picker
-    setState(() {
-      if (_selectedImages.length > index) {
-        _selectedImages[index] = 'image_$index';
-      } else {
-        _selectedImages.add('image_$index');
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 80,
+      );
+      
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImages[index] = File(pickedFile.path);
+        });
       }
-    });
-  }
-
-  void _submitOrder() {
-    if (_formKey.currentState!.validate()) {
-      // الانتقال لشاشة التأكيد
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => OrderConfirmationScreen(
-            sellerName: _nameController.text,
-            phone: _phoneController.text,
-            category: _categoryController.text,
-            price: _priceController.text,
-            quantity: _quantityController.text,
-            description: _descriptionController.text,
-            images: _selectedImages,
-          ),
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('خطأ في اختيار الصورة: $e'),
+          backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  Future<void> _submitOrder() async {
+    if (_formKey.currentState!.validate()) {
+      // حفظ الطلب
+      await _orderService.saveOrder(
+        sellerName: _nameController.text,
+        phone: _phoneController.text,
+        category: _categoryController.text,
+        price: _priceController.text,
+        quantity: _quantityController.text,
+        description: _descriptionController.text,
+        images: _selectedImages,
+      );
+
+      if (mounted) {
+        // الانتقال لشاشة التأكيد
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => OrderConfirmationScreen(
+              sellerName: _nameController.text,
+              phone: _phoneController.text,
+              category: _categoryController.text,
+              price: _priceController.text,
+              quantity: _quantityController.text,
+              description: _descriptionController.text,
+              images: _selectedImages,
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -315,6 +344,7 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                 mainAxisSpacing: 16,
                                 crossAxisSpacing: 16,
                                 children: List.generate(4, (index) {
+                                  final hasImage = _selectedImages[index] != null;
                                   return GestureDetector(
                                     onTap: () => _pickImage(index),
                                     child: Container(
@@ -327,12 +357,12 @@ class _NewOrderScreenState extends State<NewOrderScreen> {
                                           style: BorderStyle.solid,
                                         ),
                                       ),
-                                      child: _selectedImages.length > index
-                                          ? const Center(
-                                              child: Icon(
-                                                Icons.check_circle,
-                                                color: Colors.green,
-                                                size: 40,
+                                      child: hasImage
+                                          ? ClipRRect(
+                                              borderRadius: BorderRadius.circular(10),
+                                              child: Image.file(
+                                                _selectedImages[index]!,
+                                                fit: BoxFit.cover,
                                               ),
                                             )
                                           : const Center(

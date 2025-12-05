@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import '../utils/constants.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class OrderConfirmationScreen extends StatelessWidget {
   final String price;
   final String quantity;
   final String description;
-  final List<String> images;
+  final List<File?> images;
 
   const OrderConfirmationScreen({
     super.key,

@@ -26,12 +26,12 @@ class ProfileScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.arrow_forward, color: AppColors.textPrimary),
-              onPressed: () {},
-            ),
-          ],
+          // actions: [
+          //   IconButton(
+          //     icon: const Icon(Icons.arrow_forward, color: AppColors.textPrimary),
+          //     onPressed: () {},
+          //   ),
+          // ],
         ),
         body: SafeArea(
           child: SingleChildScrollView(
