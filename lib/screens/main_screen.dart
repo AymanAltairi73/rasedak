@@ -344,7 +344,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    height: 32,
+                    height: 30,
                     child: OutlinedButton(
                       onPressed: () {
                         // TODO: Add to cart
@@ -355,6 +355,7 @@ class _MainScreenState extends State<MainScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       child: const Text(
                         AppStrings.orderNow,
